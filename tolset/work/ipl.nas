@@ -33,7 +33,7 @@ entry:
         mov ch, 0
         mov dh, 0
         mov cl, 2
-
+readloop:
         mov si, 0
 retry:
         mov ah, 0x02
@@ -41,7 +41,7 @@ retry:
         mov bx, 0
         mov dl, 0x00
         int 0x13
-        jnc fin
+        jnc next
 
         add si, 1
         cmp si, 5
@@ -50,6 +50,15 @@ retry:
         mov dl, 0x00
         int 0x13
         jmp retry
+
+next:
+        mov ax, es
+        add ax, 0x0020
+        mov es, ax
+
+        add cl, 1
+        cmp cl, 18
+        jbe readloop
 
 fin:
         hlt
