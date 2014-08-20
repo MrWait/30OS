@@ -1,3 +1,4 @@
+cyls equ 10
 
 ORG     0x7c00
 
@@ -59,6 +60,15 @@ next:
         add cl, 1
         cmp cl, 18
         jbe readloop
+        mov cl, 1
+        add dh, 1
+        cmp dh, 2
+        jb readloop
+        mov dh, 0
+        add ch, 1
+        cmp ch, cyls
+        jb readloop
+        
 
 fin:
         hlt
