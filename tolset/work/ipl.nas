@@ -3,7 +3,7 @@ ORG     0x7c00
 
         jmp entry
         DB  0x90
-        DB  "HELLOIPL"
+        DB  "HARIBOTE"
         DW 512
         DB 1
         DW 1
@@ -18,20 +18,36 @@ ORG     0x7c00
         DD 2880
         DB 0, 0, 0x29
         DD 0xffffffff
-        DB "HELLO-OS   "
+        DB "HERIBOTEOS "
         DB "FAT12   "
         RESB 18
-
-
-
 
 entry:
         mov ax, 0
         mov ss, ax
         mov sp, 0x7c00
         mov ds, ax
-        mov es, ax
 
+        mov ax, 0x0820
+        mov es, ax
+        mov ch, 0
+        mov dh, 0
+        mov cl, 2
+
+        mov ah, 0x02
+        mov al, 1
+        mov bx, 0
+        mov dl, 0x00
+        int 0x13
+        jc error
+
+
+
+fin:
+        hlt
+        jmp fin
+
+error:
         mov si, msg
 putloop:
         mov al, [si]
@@ -43,13 +59,9 @@ putloop:
         int 0x10
         jmp putloop
 
-fin:
-        hlt
-        jmp fin
-
 msg:
         db 0x0a, 0x0a
-        db "hello, world"
+        db "load error"
         db 0x0a
         db 0
         resb 0x7dfe - $
