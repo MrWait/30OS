@@ -68,12 +68,8 @@ next:
         add ch, 1
         cmp ch, cyls
         jb readloop
-        
 
-fin:
-        hlt
-        jmp fin
-
+        jmp 0xc200
 error:
         mov si, msg
 putloop:
@@ -86,6 +82,9 @@ putloop:
         int 0x10
         jmp putloop
 
+fin:
+        hlt
+        jmp fin
 msg:
         db 0x0a, 0x0a
         db "load error"
