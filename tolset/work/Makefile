@@ -56,8 +56,6 @@ haribote.img : ipl10.bin haribote.sys Makefile
 %.obj : %.nas Makefile
 	$(NASK) $*.nas $*.obj $*.lst
 
-imgout:haribote.img
-
 img:
 	$(MAKE) -r haribote.img
 run:

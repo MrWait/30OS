@@ -110,7 +110,7 @@ _asm_inthandler27:
         pop es
         iretd
 
-_asm_inthandler2c
+_asm_inthandler2c:
         push es
         push ds
         pushad
