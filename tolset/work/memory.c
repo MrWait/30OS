@@ -108,8 +108,8 @@ int memman_free(struct MEMMAN *man, unsigned int addr, unsigned int size)
                     }
                 }
             }
+            return 0;
         }
-        return 0;
     }
 
     if( i < man->frees)
