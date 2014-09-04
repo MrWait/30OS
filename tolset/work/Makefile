@@ -70,7 +70,6 @@ install:
 clean:
 	$(DEL) *.bin
 	$(DEL) *.lst
-	$(DEL) *.gas
 	$(DEL) *.obj
 	$(DEL) bootpack.map
 	$(DEL) bootpack.bim
