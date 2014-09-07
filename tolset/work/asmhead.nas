@@ -1,3 +1,5 @@
+[INSTRSET "i486p"]
+
 vbemode equ 0x105
 
 botpak equ 0x00280000
@@ -60,6 +62,7 @@ scrn320:
      mov word [scrny], 200
      mov dword [vram], 0x000a0000
 
+keystatus:
      mov ah, 0x02
      int 0x16
      mov [leds], al
@@ -80,48 +83,47 @@ scrn320:
      out 0x60, al
      call waitkbdout
 
-[INSTRSET "i486p"]
-          lgdt [gdtr0]
-          mov eax, cr0
-          and eax, 0x7fffffff
-          or eax, 0x00000001
-          mov cr0, eax
-          jmp pipelineflush
-pipelineflush:
-          mov ax, 1 * 8
-          mov ds, ax
-          mov es, ax
-          mov fs, ax
-          mov gs, ax
-          mov ss, ax
+     lgdt [gdtr0]
+     mov eax, cr0
+     and eax, 0x7fffffff
+     or eax, 0x00000001
+     mov cr0, eax
+     jmp pipelineflush
+     pipelineflush:
+     mov ax, 1 * 8
+     mov ds, ax
+     mov es, ax
+     mov fs, ax
+     mov gs, ax
+     mov ss, ax
 
-          mov esi, bootpack
-          mov edi, botpak
-          mov ecx, 512 * 1024 / 4
-          call memcpy
+     mov esi, bootpack
+     mov edi, botpak
+     mov ecx, 512 * 1024 / 4
+     call memcpy
 
-          mov esi, 0x7c00
-          mov edi, dskcac
-          mov ecx, 512 / 4
-          call memcpy
+     mov esi, 0x7c00
+     mov edi, dskcac
+     mov ecx, 512 / 4
+     call memcpy
 
-          mov esi, dskcac0 + 512
-          mov edi, dskcac + 512
-          mov ecx, 0
-          mov cl, byte [cyls]
-          imul ecx, 512 * 18 * 2 / 4
-          sub ecx, 512 / 4
-          call memcpy
+     mov esi, dskcac0 + 512
+     mov edi, dskcac + 512
+     mov ecx, 0
+     mov cl, byte [cyls]
+     imul ecx, 512 * 18 * 2 / 4
+     sub ecx, 512 / 4
+     call memcpy
 
-          mov ebx, botpak
-          mov ecx, [ebx + 16]
-          add ecx, 3
-          shr ecx, 2
-          jz skip
-          mov esi, [ebx + 20]
-          add esi, ebx
-          mov edi, [ebx + 12]
-          call memcpy
+     mov ebx, botpak
+     mov ecx, [ebx + 16]
+     add ecx, 3
+     shr ecx, 2
+     jz skip
+     mov esi, [ebx + 20]
+     add esi, ebx
+     mov edi, [ebx + 12]
+     call memcpy
 
 skip:
         mov esp, [ebx + 12]
