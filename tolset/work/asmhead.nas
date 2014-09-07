@@ -11,13 +11,13 @@ vram equ 0x0ff8
 
      org 0xc200
 
-     mov al, 0x13
-     mov ah, 0x00
+     mov bx, 0x4101
+     mov ax, 0x4f02
      int 0x10
      mov byte [vmode], 8
-     mov word [scrnx], 320
-     mov word [scrny], 200
-     mov dword [vram], 0x000a0000
+     mov word [scrnx], 640
+     mov word [scrny], 480
+     mov dword [vram], 0xe0000000
 
      mov ah, 0x02
      int 0x16
