@@ -1,3 +1,5 @@
+vbemode equ 0x105
+
 botpak equ 0x00280000
 dskcac equ 0x00100000
 dskcac0 equ 0x00008000
@@ -11,13 +13,52 @@ vram equ 0x0ff8
 
      org 0xc200
 
-     mov bx, 0x4101
+     mov ax, 0x9000
+     mov es, ax
+     mov di, 0
+     mov ax, 0x4f00
+     int 0x10
+     cmp ax, 0x004f
+     jne scrn320
+
+     mov ax, [es:di + 4]
+     cmp ax, 0x0200
+     jb scrn320
+
+     mov cx, vbemode
+     mov ax, 0x4f01
+     int 0x10
+     cmp ax, 0x004f
+     jne scrn320
+
+     cmp byte [es:di + 0x19], 8
+     jne scrn320
+     cmp byte [es:di + 0x1b], 4
+     jne scrn320
+     mov ax, [es:di + 0x00]
+     and ax, 0x0080
+     jz scrn320
+
+     mov bx, vbemode + 0x4000
      mov ax, 0x4f02
      int 0x10
      mov byte [vmode], 8
-     mov word [scrnx], 640
-     mov word [scrny], 480
-     mov dword [vram], 0xe0000000
+     mov ax, [es:di + 0x12]
+     mov [scrnx], ax
+     mov ax, [es:di + 0x14]
+     mov [scrny], ax
+     mov eax, [es:di + 0x28]
+     mov [vram], eax
+     jmp keystatus
+
+scrn320:
+     mov al, 0x13
+     mov ah, 0x00
+     int 0x10
+     mov byte [vmode], 8
+     mov word [scrnx], 320
+     mov word [scrny], 200
+     mov dword [vram], 0x000a0000
 
      mov ah, 0x02
      int 0x16
