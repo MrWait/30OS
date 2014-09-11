@@ -4,8 +4,8 @@
 void make_window8(unsigned char *buf, int xsize, int ysize, char *title, char act);
 void putfonts8_asc_sht(struct SHEET *sht, int x, int y, int c, int b, char *s, int l);
 void make_textbox8(struct SHEET *sht, int x0, int y0, int sx, int sy, int c);
-
 void task_b_main(struct SHEET *sht_back);
+
 void HariMain(void)
 {
     struct BOOTINFO *binfo =(struct BOOTINFO *) ADR_BOOTINFO;
@@ -73,7 +73,7 @@ void HariMain(void)
         task_b[i]->tss.fs = 1 * 8;
         task_b[i]->tss.gs = 1 * 8;
         *((int *)(task_b[i]->tss.esp + 4)) = (int)sht_win_b[i];
-        task_run(task_b[i]);
+        task_run(task_b[i], i + 1);
     }
 
     sht_win = sheet_alloc(shtctl);
