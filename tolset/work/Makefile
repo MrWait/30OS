@@ -1,4 +1,6 @@
-OBJS_BOOTPACK = bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj int.obj fifo.obj keyboard.obj mouse.obj memory.obj sheet.obj timer.obj mtask.obj window.obj console.obj file.obj
+OBJS_BOOTPACK = bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj \
+		int.obj fifo.obj keyboard.obj mouse.obj memory.obj sheet.obj timer.obj \
+		mtask.obj window.obj console.obj file.obj
 TOOLPATH =  ../z_tools/
 INCPATH = ../z_tools/haribote/
 MAKE = $(TOOLPATH)make.exe -r
@@ -58,8 +60,8 @@ hello3.bim : hello3.obj a_nask.obj Makefile
 hello3.hrb : hello3.bim Makefile
 	$(BIM2HRB) hello3.bim hello3.hrb 0
 
-crack1.bim : crack1.obj a_nask.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:crack1.bim map:crack1.map crack1.obj a_nask.obj
+crack1.bim : crack1.obj Makefile
+	$(OBJ2BIM) @$(RULEFILE) out:crack1.bim map:crack1.map crack1.obj
 
 crack1.hrb : crack1.bim Makefile
 	$(BIM2HRB) crack1.bim crack1.hrb 0

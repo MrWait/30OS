@@ -1,7 +1,8 @@
+;
+;
 [FORMAT "WCOFF"]
 [INSTRSET "i486p"]
 [BITS 32]
-
 [FILE "naskfunc.nas"]
       GLOBAL _io_hlt, _io_cli, _io_sti, _io_stihlt
       GLOBAL _io_in8, _io_in16, _io_in32
@@ -14,7 +15,7 @@
       GLOBAL _asm_inthandler27, _asm_inthandler2c
       GLOBAL _memtest_sub
       GLOBAL _farjmp, _farcall
-      GLOBAL _asm_hrb_api
+      GLOBAL _asm_hrb_api, _start_app
       EXTERN _inthandler20, _inthandler21
       EXTERN _inthandler27, _inthandler2c
       EXTERN _hrb_api
@@ -114,66 +115,162 @@ _asm_inthandler20:
         push es
         push ds
         pushad
+        mov ax, ss
+        cmp ax, 1 * 8
+        jne .from_app
         mov eax, esp
+        push ss
         push eax
         mov ax, ss
         mov ds, ax
         mov es, ax
         call _inthandler20
-        pop eax
+        add esp, 8
         popad
         pop ds
         pop es
         iretd
 
+.from_app:
+        mov eax, 1 * 8
+        mov ds, ax
+        mov ecx, [0xfe4]
+        add ecx, -8
+        mov [ecx + 4], ss
+        mov [ecx], esp
+        mov ss, ax
+        mov es, ax
+        mov esp, ecx
+        call _inthandler20
+        pop ecx
+        pop eax
+        mov ss, ax
+        mov esp, ecx
+        popad
+        pop ds
+        pop es
+        iretd
 
 _asm_inthandler21:
         push es
         push ds
         pushad
+        mov ax, ss
+        cmp ax, 1 * 8
+        jne .from_app
         mov eax, esp
+        push ss
         push eax
         mov ax, ss
         mov ds, ax
         mov es, ax
         call _inthandler21
-        pop eax
+        add esp, 8
         popad
         pop ds
         pop es
         iretd
+.from_app:
+        mov eax, 1 * 8
+        mov ds, ax
+        mov ecx, [0xfe4]
+        add ecx, -8
+        mov [ecx + 4], ss
+        mov [ecx], esp
+        mov ss, ax
+        mov es, ax
+        mov esp, ecx
+        call _inthandler21
+        pop ecx
+        pop eax
+        mov ss, ax
+        mov esp, ecx
+        popad
+        pop ds
+        pop es
+        iretd
+
 
 _asm_inthandler27:
         push es
         push ds
         pushad
+        mov ax, ss
+        cmp ax, 1 * 8
+        jne .from_app
         mov eax, esp
+        push ss
         push eax
         mov ax, ss
         mov ds, ax
         mov es, ax
         call _inthandler27
+        add esp, 8
+        popad
+        pop ds
+        pop es
+        iretd
+.from_app:
+        mov eax, 1 * 8
+        mov ds, ax
+        mov ecx, [0xfe4]
+        add ecx, -8
+        mov [ecx + 4], ss
+        mov [ecx], esp
+        mov ss, ax
+        mov es, ax
+        mov esp, ecx
+        call _inthandler27
+        pop ecx
         pop eax
+        mov ss, ax
+        mov esp, ecx
         popad
         pop ds
         pop es
         iretd
 
+
 _asm_inthandler2c:
         push es
         push ds
         pushad
+        mov ax, ss
+        cmp ax, 1 * 8
+        jne .from_app
         mov eax, esp
+        push ss
         push eax
         mov ax, ss
         mov ds, ax
         mov es, ax
         call _inthandler2c
-        pop eax
+        add esp, 8
         popad
         pop ds
         pop es
         iretd
+
+.from_app:
+        mov eax, 1 * 8
+        mov ds, ax
+        mov ecx, [0xfe4]
+        add ecx, -8
+        mov [ecx + 4], ss
+        mov [ecx], esp
+        mov ss, ax
+        mov es, ax
+        mov esp, ecx
+        call _inthandler2c
+        pop ecx
+        pop eax
+        mov ss, ax
+        mov esp, ecx
+        popad
+        pop ds
+        pop es
+        iretd
+
 
 _memtest_sub:
         push edi
@@ -219,10 +316,79 @@ _farcall:
         ret
 
 _asm_hrb_api:
+        push ds
+        push es
+        pushad
+        mov eax, 1 * 8
+        mov ds, ax
+        mov ecx, [0xfe4]
+        add ecx, -40
+        mov [ecx + 32], esp
+        mov [ecx + 36], ss
+        mov edx, [esp]
+        mov ebx, [esp + 4]
+        mov [ecx], edx
+        mov [ecx + 4], ebx
+        mov edx, [esp + 8]
+        mov ebx, [esp + 12]
+        mov [ecx + 8], edx
+        mov [ecx + 12], ebx
+        mov edx, [esp + 16]
+        mov ebx, [esp + 20]
+        mov [ecx + 16], edx
+        mov [ecx + 20], ebx
+        mov edx, [esp + 24]
+        mov ebx, [esp + 28]
+        mov [ecx + 24], edx
+        mov [ecx + 28], ebx
+
+        mov es, ax
+        mov ss, ax
+        mov esp, ecx
         sti
-        pushad
-        pushad
+
         call _hrb_api
-        add esp, 32
+
+        mov ecx, [esp + 32]
+        mov eax, [esp + 36]
+        cli
+        mov ss, ax
+        mov esp, ecx
         popad
+        pop es
+        pop ds
         iretd
+
+
+_start_app:
+        pushad
+        mov eax, [esp + 36]
+        mov ecx, [esp + 40]
+        mov edx, [esp + 44]
+        mov ebx, [esp + 48]
+        mov [0xfe4], esp
+        cli
+        mov es, bx
+        mov ss, bx
+        mov ds, bx
+        mov fs, bx
+        mov gs, bx
+        mov esp, edx
+        sti
+        push ecx
+        push eax
+        call far [esp]
+
+
+
+        mov eax, 1 * 8
+        cli
+        mov es, ax
+        mov ss, ax
+        mov ds, ax
+        mov fs, ax
+        mov gs, ax
+        mov esp, [0xfe4]
+        sti
+        popad
+        ret
