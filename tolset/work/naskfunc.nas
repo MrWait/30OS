@@ -13,7 +13,7 @@
       GLOBAL _asm_inthandler20, _asm_inthandler21
       GLOBAL _asm_inthandler27, _asm_inthandler2c
       GLOBAL _memtest_sub
-      GLOBAL _farjmp
+      GLOBAL _farjmp, _farcall
       GLOBAL _asm_cons_putchar
       EXTERN _inthandler20, _inthandler21
       EXTERN _inthandler27, _inthandler2c
@@ -212,6 +212,10 @@ mts_fin:
 
 _farjmp:
         jmp far [esp + 4]
+        ret
+
+_farcall:
+        call far [esp + 4]
         ret
 
 _asm_cons_putchar:
