@@ -1,12 +1,14 @@
+[INSTRSET "i486p"]
 [BITS 32]
-      mov al, 'h'
+      mov ecx, msg
+putloop:
+      mov al, [cs:ecx]
+      cmp al, 0
+      je fin
       int 0x40
-      mov al, 'e'
-      int 0x40
-      mov al, 'l'
-      int 0x40
-      mov al, 'l'
-      int 0x40
-      mov al, 'o'
-      int 0x40
-      retf
+      add ecx, 1
+      jmp putloop
+fin:
+        retf
+msg:
+        db "hello",0
