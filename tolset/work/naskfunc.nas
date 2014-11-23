@@ -221,4 +221,4 @@ _asm_cons_putchar:
         push dword [0x0fec]
         call _cons_putchar
         add esp, 12
-        ret
+        retf
