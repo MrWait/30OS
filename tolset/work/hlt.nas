@@ -1,7 +1,12 @@
 [BITS 32]
-      mov al, 'A'
-      call 2*8:0xbe8
+      mov al, 'h'
+      int 0x40
+      mov al, 'e'
+      int 0x40
+      mov al, 'l'
+      int 0x40
+      mov al, 'l'
+      int 0x40
+      mov al, 'o'
+      int 0x40
       retf
-fin:
-        hlt
-        jmp fin
