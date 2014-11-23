@@ -14,8 +14,10 @@
       GLOBAL _asm_inthandler27, _asm_inthandler2c
       GLOBAL _memtest_sub
       GLOBAL _farjmp
+      GLOBAL _asm_cons_putchar
       EXTERN _inthandler20, _inthandler21
       EXTERN _inthandler27, _inthandler2c
+      EXTERN _cons_putchar
 [SECTION .text]
 
 _io_hlt:
@@ -25,6 +27,7 @@ _io_hlt:
 _io_cli:
         cli
         ret
+
 _io_sti:
         sti
         ret
@@ -33,44 +36,53 @@ _io_stihlt:
         sti
         hlt
         ret
+
 _io_in8:
         mov edx, [esp + 4]
         mov eax, 0
         in al, dx
         ret
+
 _io_in16:
         mov edx,  [esp + 4]
         mov eax, 0
         in ax, dx
         ret
+
 _io_in32:
         mov edx, [esp + 4]
         in eax, dx
         ret
+
 _io_out8:
         mov edx, [esp + 4]
         mov al, [esp + 8]
         out dx, al
         ret
+
 _io_out16:
         mov edx, [esp + 4]
         mov eax, [esp + 8]
         out dx, ax
         ret
+
 _io_out32:
         mov edx, [esp + 4]
         mov eax, [esp + 8]
         out dx, eax
         ret
+
 _io_load_eflags:
         pushfd
         pop eax
         ret
+
 _io_store_eflags:
         mov eax, [esp + 4]
         push eax
         popfd
         ret
+
 
 _load_gdtr:
         mov ax, [esp + 4]
@@ -78,11 +90,13 @@ _load_gdtr:
         lgdt [esp + 6]
         ret
 
+
 _load_idtr:
         mov ax, [esp + 4]
         mov [esp + 6], ax
         lidt [esp + 6]
         ret
+
 _load_cr0:
         mov eax, cr0
         ret
@@ -91,6 +105,7 @@ _store_cr0:
         mov eax, [esp + 4]
         mov cr0, eax
         ret
+
 _load_tr:
         ltr [esp + 4]
         ret
@@ -167,6 +182,7 @@ _memtest_sub:
         mov esi, 0xaa55aa55
         mov edi, 0x55aa55aa
         mov eax, [esp + 12 + 4]
+
 mts_loop:
         mov ebx, eax
         add ebx, 0xffc
@@ -186,6 +202,7 @@ mts_loop:
         pop esi
         pop edi
         ret
+
 mts_fin:
         mov [ebx], edx
         pop ebx
@@ -195,4 +212,13 @@ mts_fin:
 
 _farjmp:
         jmp far [esp + 4]
+        ret
+
+_asm_cons_putchar:
+        push 1
+        and eax, 0xff
+        push eax
+        push dword [0x0fec]
+        call _cons_putchar
+        add esp, 12
         ret
