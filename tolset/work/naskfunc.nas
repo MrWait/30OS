@@ -13,13 +13,13 @@
       GLOBAL _load_tr
       GLOBAL _asm_inthandler20, _asm_inthandler21
       GLOBAL _asm_inthandler27, _asm_inthandler2c
-      GLOBAL _asm_inthandler0d
+      GLOBAL _asm_inthandler0c, _asm_inthandler0d
       GLOBAL _memtest_sub
       GLOBAL _farjmp, _farcall
       GLOBAL _asm_hrb_api, _start_app
       EXTERN _inthandler20, _inthandler21
       EXTERN _inthandler27, _inthandler2c
-      EXTERN _inthandler0d
+      EXTERN _inthandler0c, _inthandler0d
       EXTERN _hrb_api
 [SECTION .text]
 
@@ -177,6 +177,26 @@ _asm_inthandler2c:
         popad
         pop ds
         pop es
+        iretd
+
+_asm_inthandler0c:
+        sti
+        push es
+        push ds
+        pushad
+        mov eax, esp
+        push eax
+        mov ax, ss
+        mov ds, ax
+        mov es, ax
+        call _inthandler0c
+        cmp eax, 0
+        jne end_app
+        pop eax
+        popad
+        pop ds
+        pop es
+        add esp, 4
         iretd
 
 _asm_inthandler0d:
