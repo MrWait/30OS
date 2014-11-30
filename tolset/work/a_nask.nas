@@ -9,6 +9,9 @@
       GLOBAL _api_openwin
       GLOBAL _api_putstrwin
       GLOBAL _api_boxfilwin
+      GLOBAL _api_initmalloc
+      GLOBAL _api_malloc
+      GLOBAL _api_free
 [SECTION .text]
 
 _api_putchar:
@@ -81,4 +84,35 @@ _api_boxfilwin:
         pop ebp
         pop esi
         pop edi
+        ret
+
+_api_initmalloc:
+        push ebx
+        mov edx, 8
+        mov ebx, [cs : 0x0020]
+        mov eax, ebx
+        add eax, 32 * 1024
+        mov ecx, [cs : 0x0000]
+        sub ecx, eax
+        int 0x40
+        pop ebx
+        ret
+
+_api_malloc:
+        push ebx
+        mov edx, 9
+        mov ebx, [cs : 0x0020]
+        mov ecx, [esp + 8]
+        int 0x40
+        pop ebx
+        ret
+
+_api_free:
+        push ebx
+        mov edx, 10
+        mov ebx, [cs : 0x0020]
+        mov eax, [esp + 8]
+        mov ecx, [esp + 12]
+        int 0x40
+        pop ebx
         ret
