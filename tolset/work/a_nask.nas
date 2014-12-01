@@ -14,6 +14,7 @@
       GLOBAL _api_free
       GLOBAL _api_point
       GLOBAL _api_refreshwin
+      GLOBAL _api_linewin
 [SECTION .text]
 
 _api_putchar:
@@ -146,6 +147,25 @@ _api_refreshwin:
         mov edi, [esp + 32]
         int 0x40
         pop ebx
+        pop esi
+        pop edi
+        ret
+
+_api_linewin:
+        push edi
+        push esi
+        push ebp
+        push ebx
+        mov edx, 13
+        mov ebx, [esp + 20]
+        mov eax, [esp + 24]
+        mov ecx, [esp + 28]
+        mov esi, [esp + 32]
+        mov edi, [esp + 36]
+        mov ebp, [esp + 40]
+        int 0x40
+        pop ebx
+        pop ebp
         pop esi
         pop edi
         ret
