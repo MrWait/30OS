@@ -12,6 +12,7 @@
       GLOBAL _api_initmalloc
       GLOBAL _api_malloc
       GLOBAL _api_free
+      GLOBAL _api_point
 [SECTION .text]
 
 _api_putchar:
@@ -115,4 +116,19 @@ _api_free:
         mov ecx, [esp + 12]
         int 0x40
         pop ebx
+        ret
+
+_api_point:
+        push edi
+        push esi
+        push ebx
+        mov edx, 11
+        mov ebx, [esp + 16]
+        mov esi, [esp + 20]
+        mov edi, [esp + 24]
+        mov eax, [esp + 28]
+        int 0x40
+        pop ebx
+        pop esi
+        pop edi
         ret
