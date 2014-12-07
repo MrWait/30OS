@@ -16,6 +16,7 @@
       GLOBAL _api_refreshwin
       GLOBAL _api_linewin
       GLOBAL _api_closewin
+      GLOBAL _api_getkey
 [SECTION .text]
 
 _api_putchar:
@@ -177,4 +178,10 @@ _api_closewin:
         mov ebx, [esp + 8]
         int 0x40
         pop ebx
+        ret
+
+_api_getkey:
+        mov edx, 15
+        mov eax, [esp + 4]
+        int 0x40
         ret
